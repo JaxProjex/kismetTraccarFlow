@@ -1,0 +1,156 @@
+[
+    {
+        "id": "42e2829a9fd2b420",
+        "type": "tab",
+        "label": "kismetTraccarFlow",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "66d20b13353ea007",
+        "type": "inject",
+        "z": "42e2829a9fd2b420",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 240,
+        "wires": [
+            [
+                "a77cc9b8692c6d44"
+            ]
+        ]
+    },
+    {
+        "id": "a77cc9b8692c6d44",
+        "type": "http request",
+        "z": "42e2829a9fd2b420",
+        "name": "http req (kismet)",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://10.0.0.185:2501/gps/location.json",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": false,
+        "headers": [],
+        "x": 400,
+        "y": 240,
+        "wires": [
+            [
+                "15d2046efd1568ea"
+            ]
+        ]
+    },
+    {
+        "id": "158554366f5287d1",
+        "type": "debug",
+        "z": "42e2829a9fd2b420",
+        "name": "debug device",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 960,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "15d2046efd1568ea",
+        "type": "json",
+        "z": "42e2829a9fd2b420",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 590,
+        "y": 240,
+        "wires": [
+            [
+                "30bc2285198e97ba",
+                "ca0d1f5b755bc81f"
+            ]
+        ]
+    },
+    {
+        "id": "3fdfff74a6f0a83c",
+        "type": "http request",
+        "z": "42e2829a9fd2b420",
+        "name": "http put (traccar)",
+        "method": "PUT",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://10.237.104.72:5055/?id={{{payload.id}}}&lat={{{payload.lat}}}&lon={{{payload.lon}}}",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1050,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "30bc2285198e97ba",
+        "type": "function",
+        "z": "42e2829a9fd2b420",
+        "name": "kismet json (position)",
+        "func": "\n//var id = msg.payload\n//var name = msg.payload.pvs[5].v\nvar lat = String(msg.payload[\"kismet.common.location.geopoint\"][1]);\nvar lon = String(msg.payload[\"kismet.common.location.geopoint\"][0]);\n//var alt = \n\nmsg.payload = {\n    \"id\": \"6969\",\n    \"lat\": lat,\n    \"lon\": lon,\n    //\"alt\": alt,\n    //\"hdop\": hdop,\n    //\"speed\": speed,\n    //\"timestamp\": timestamp,\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 800,
+        "y": 240,
+        "wires": [
+            [
+                "158554366f5287d1",
+                "3fdfff74a6f0a83c"
+            ]
+        ]
+    },
+    {
+        "id": "ca0d1f5b755bc81f",
+        "type": "debug",
+        "z": "42e2829a9fd2b420",
+        "name": "debug json",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 160,
+        "wires": []
+    }
+]
