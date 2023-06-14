@@ -1,2 +1,2 @@
 # kismetTraccarFlow
-node red flow to forward kismet location to traccar server
+Node-Red Flow to forward Kismet device location to Traccar Server.
